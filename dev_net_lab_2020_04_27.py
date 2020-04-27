@@ -9,13 +9,12 @@ import datetime
 
 def send_to_device(device):
     with ConnectHandler(**device) as ssh:
-        path = "/home/vagrant/my_repo/online-8-oleg-bosyuk/exercises/20_concurrent_connections/"
         ssh.enable()
-        device_name = device['ip']                                              # go to out
         now_time = datetime.datetime.now().strftime('%Y_%m_%d-%H_%M_%S')
         prompt = ssh.find_prompt()
+        device_name = prompt.split('#')[0]                                           # go to out
         bckp = ssh.send_command('show run')
-        with open(path+ (device_name + '_' + now_time + '.txt'), 'w') as bckp_f:
+        with open((device_name + '_' + now_time + '.txt'), 'w') as bckp_f:
             bckp_f.write(bckp)                                                  # create file|files
         cdp_on = ssh.send_command('show cdp neig')
         if 'CDP is not' in cdp_on:
@@ -61,7 +60,6 @@ def send_to_executor(devices, limit=3):
         pass
 
 if __name__ == "__main__":
-    path = "/home/vagrant/my_repo/online-8-oleg-bosyuk/exercises/20_concurrent_connections/"
-    with open(path + "devices2.yaml") as f:
+    with open("devices2.yaml") as f:
         devices = yaml.safe_load(f)
     send_to_executor(devices)
