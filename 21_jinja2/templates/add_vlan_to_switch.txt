@@ -1,0 +1,14 @@
+vlan {{ vlan_id }}
+ name {{ name}}
+!
+{% for int in access%}
+interface {{ int }}
+{% endfor %}
+ switchport mode access
+ switchport access vlan {{ vlan_id }}
+!
+{% for int in trunk %}
+interface {{ int }}
+switchport trunk allowed vlan add {{ vlan_id }}
+{% endfor %}
+

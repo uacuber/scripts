@@ -1,0 +1,34 @@
+# -*- coding: utf-8 -*-
+"""
+Задание 19.1a
+
+Скопировать функцию send_show_command из задания 19.1 и переделать ее таким образом,
+чтобы обрабатывалось исключение, которое генерируется
+при ошибке аутентификации на устройстве.
+
+При возникновении ошибки, на стандартный поток вывода должно выводиться сообщение исключения.
+
+Для проверки измените пароль на устройстве или в файле devices.yaml.
+"""
+
+from netmiko import ConnectHandler
+import yaml
+from netmiko.ssh_exception import NetMikoAuthenticationException
+
+def send_show_command(device, command):
+    try:
+        with ConnectHandler(**device) as ssh:
+            ssh.enable()
+            output = ssh.send_command(command)
+        return output
+    except NetMikoAuthenticationException as error:
+        print(error)
+
+
+if __name__ == "__main__":
+    command = "sh ip int br"
+    path = "/home/vagrant/my_repo/online-8-oleg-bosyuk/exercises/19_ssh_telnet/"
+    with open(path + "devices.yaml") as f:
+        devices = yaml.safe_load(f)
+    for device in devices:
+        print(send_show_command(device, command))
